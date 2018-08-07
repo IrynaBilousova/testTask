@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Client;
 
 
+/**
+ * Class ClientController
+ * @package App\Http\Controllers
+ */
 class ClientController extends Controller
 {
 
@@ -22,10 +26,12 @@ class ClientController extends Controller
 
 
     /**
+     *
      * Store a newly created client in database.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function store(Request $request)
     {
@@ -41,17 +47,19 @@ class ClientController extends Controller
         $ip_address  = $request->input('ip_address');
 
         $client = new \GuzzleHttp\Client();
-        $res = $client->request('GET', "http://127.0.0.1:80/clients/validate+{$mac_address}+{$ip_address}");
 
-        $body = $res->getBody();
+        $result = $client->request('GET', "http://127.0.0.1:80/clients/validate+{$mac_address}+{$ip_address}");
+
+        $body = $result->getBody();
 
         $obj = json_decode($body);
 
-        if($obj->success){
+        if($obj->success)
+        {
             Client::create($request->all());
+
             return back()->with('success', 'New client is registered successfully.');
         }
             return back()->with('failure', 'IP Address and MAC Address don`t match.');
-
     }
 }

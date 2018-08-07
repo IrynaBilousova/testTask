@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class ValidationController extends Controller
 {
     public function index($mac_address, $ip_address)
@@ -16,18 +14,13 @@ class ValidationController extends Controller
             ['ip_address' => '111.111.111.131', 'mac_address' => 'Z4:R4:u7:6t:5r'],
         ];
 
-
-        $handle = fopen('log.txt', 'a');
-
-
          foreach ($array  as $key => $value) {
-             fwrite($handle, $ip_address . 'vs' . $mac_address);
+
 
              if ($value['ip_address'] === $ip_address && $value['mac_address'] === $mac_address)
                  return response()->json(['success' => true], 200);
          }
 
-        fclose($handle);
-        return response()->json(['success' => false ], 200);
+        return response()->json(['success' => false ], 422);
     }
 }
